@@ -30,3 +30,17 @@ G=1 indicate that the robot is in a square adjacent to one of the green walls.
 ```
 <img width="484" height="304" alt="image" src="https://github.com/user-attachments/assets/d2fd882f-0db2-47c2-ba22-3066f42dc209" />
 
+## 3. FlowChart
+```text
+Explaiination:
+There's no wall ahead
+→ Keep going
+There is a wall ahead
+    Is there a blockage on the left?
+      Yes → Move to the right
+      No → Move left
+```
+<img width="706" height="680" alt="image" src="https://github.com/user-attachments/assets/1fa4269b-f67e-4c1d-b82a-c068a74b3c50" />
+
+
+
