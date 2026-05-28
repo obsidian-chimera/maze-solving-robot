@@ -1,82 +1,19 @@
-#include <Arduino.h>
-#include "config.h"
-#include "motors.h"
+#ifndef SENSORS_H
+#define SENSORS_H
 
-void initMotors() {
-  pinMode(MOTOR_A_PWM, OUTPUT);
-  pinMode(MOTOR_A_DIR, OUTPUT);
-  pinMode(MOTOR_A_BRAKE, OUTPUT);
+struct SensorData {
+  int frontRaw;
+  int rearRaw;
 
-  pinMode(MOTOR_B_PWM, OUTPUT);
-  pinMode(MOTOR_B_DIR, OUTPUT);
-  pinMode(MOTOR_B_BRAKE, OUTPUT);
+  bool frontBlocked;
+  bool frontClear;
 
-  pinMode(SIDE_MOTOR_1_IN1, OUTPUT);
-  pinMode(SIDE_MOTOR_1_IN2, OUTPUT);
-  pinMode(SIDE_MOTOR_2_IN1, OUTPUT);
-  pinMode(SIDE_MOTOR_2_IN2, OUTPUT);
+  bool leftWallHit;
+  bool rightWallHit;
+};
 
-  digitalWrite(MOTOR_A_BRAKE, LOW);
-  digitalWrite(MOTOR_B_BRAKE, LOW);
+void initSensors();
+SensorData readSensors();
+void printSensors(const SensorData &s);
 
-  stopAllMotors();
-}
-
-void driveForward(int pwm) {
-  stopSideMotor();
-
-  // May need to swap HIGH/LOW depending on wiring.
-  digitalWrite(MOTOR_A_DIR, HIGH);
-  digitalWrite(MOTOR_B_DIR, HIGH);
-
-  analogWrite(MOTOR_A_PWM, pwm);
-  analogWrite(MOTOR_B_PWM, pwm);
-}
-
-void driveBackward(int pwm) {
-  stopSideMotor();
-
-  digitalWrite(MOTOR_A_DIR, LOW);
-  digitalWrite(MOTOR_B_DIR, LOW);
-
-  analogWrite(MOTOR_A_PWM, pwm);
-  analogWrite(MOTOR_B_PWM, pwm);
-}
-
-void stopForwardMotor() {
-  analogWrite(MOTOR_A_PWM, 0);
-  analogWrite(MOTOR_B_PWM, 0);
-}
-
-void moveLeft(int pwm) {
-  stopForwardMotor();
-
-  // If the robot moves right, swap these HIGH/LOW values.
-  analogWrite(SIDE_MOTOR_1_IN1, pwm);
-  digitalWrite(SIDE_MOTOR_1_IN2, LOW);
-
-  analogWrite(SIDE_MOTOR_2_IN1, pwm);
-  digitalWrite(SIDE_MOTOR_2_IN2, LOW);
-}
-
-void moveRight(int pwm) {
-  stopForwardMotor();
-
-  digitalWrite(SIDE_MOTOR_1_IN1, LOW);
-  analogWrite(SIDE_MOTOR_1_IN2, pwm);
-
-  digitalWrite(SIDE_MOTOR_2_IN1, LOW);
-  analogWrite(SIDE_MOTOR_2_IN2, pwm);
-}
-
-void stopSideMotor() {
-  digitalWrite(SIDE_MOTOR_1_IN1, LOW);
-  digitalWrite(SIDE_MOTOR_1_IN2, LOW);
-  digitalWrite(SIDE_MOTOR_2_IN1, LOW);
-  digitalWrite(SIDE_MOTOR_2_IN2, LOW);
-}
-
-void stopAllMotors() {
-  stopForwardMotor();
-  stopSideMotor();
-}
+#endif
