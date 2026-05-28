@@ -31,12 +31,13 @@ Submit peer review
         Yes → Move to the right
         No → Move left
 
-2. use voting algorithm to solve "an unstable front wall is detected";
+2. use range instead of single number for a threshold to solve "an unstable front wall is detected";
 3. search left for a gap;
 4. Polling to avoids being confused by the comb-shaped irregularities on the front wall;
 
 ```
-<img width="671" height="674" alt="image" src="https://github.com/user-attachments/assets/986df671-09b5-4d5f-b49e-757b2cd9317c" />
+<img width="1279" height="1428" alt="flowchart-UWL" src="https://github.com/user-attachments/assets/a217654d-e307-4bab-a8ae-cab8f239d928" />
+
 
 ## 3. State Transition Diagram
 <img width="333" height="315" alt="image" src="https://github.com/user-attachments/assets/71426a11-4d9e-4353-98ff-8dd7bd62e035" />
