@@ -21,16 +21,7 @@ Final: Improve and test in maze attempt 2
   ↓
 Submit peer review
 ```
-## 2. State Transition Diagram
-<img width="333" height="315" alt="image" src="https://github.com/user-attachments/assets/71426a11-4d9e-4353-98ff-8dd7bd62e035" />
-
-```text
-R=1 indicates that the robot is in a square with a section of the red walls in front.
-G=1 indicate that the robot is in a square adjacent to one of the green walls.
-```
-<img width="484" height="304" alt="image" src="https://github.com/user-attachments/assets/d2fd882f-0db2-47c2-ba22-3066f42dc209" />
-
-## 3. FlowChart
+## 2. Flow Chart
 ```text
 1.Explaiination:
   There's no wall ahead
@@ -45,7 +36,17 @@ G=1 indicate that the robot is in a square adjacent to one of the green walls.
 4. Polling to avoids being confused by the comb-shaped irregularities on the front wall;
 
 ```
-<img width="556" height="701" alt="image" src="https://github.com/user-attachments/assets/2ca0fce4-e264-402d-88cc-071f0db88261" />
+<img width="671" height="674" alt="image" src="https://github.com/user-attachments/assets/986df671-09b5-4d5f-b49e-757b2cd9317c" />
+
+## 3. State Transition Diagram
+<img width="333" height="315" alt="image" src="https://github.com/user-attachments/assets/71426a11-4d9e-4353-98ff-8dd7bd62e035" />
+
+```text
+R=1 indicates that the robot is in a square with a section of the red walls in front.
+G=1 indicate that the robot is in a square adjacent to one of the green walls.
+```
+<img width="484" height="304" alt="image" src="https://github.com/user-attachments/assets/d2fd882f-0db2-47c2-ba22-3066f42dc209" />
+
 
 
 
