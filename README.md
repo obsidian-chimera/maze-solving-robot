@@ -22,4 +22,8 @@ Final: Improve and test in maze attempt 2
 Submit peer review
 ```
 ## 2. State Transition Diagram
+<img width="333" height="315" alt="image" src="https://github.com/user-attachments/assets/71426a11-4d9e-4353-98ff-8dd7bd62e035" />
+
 <img width="484" height="304" alt="image" src="https://github.com/user-attachments/assets/d2fd882f-0db2-47c2-ba22-3066f42dc209" />
+R=1 indicates that the robot is in a square with a section of the red walls in front.
+G=1 indicate that the robot is in a square adjacent to one of the green walls.
