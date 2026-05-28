@@ -1,8 +1,8 @@
-# maze-solving-robot
+## maze-solving-robot
 Arduino maze-solving robot project for Scenario B ELEC0035 UCL
 
+# 1. Development Process
 ```text
-1. Development Process
 Day 1: Read brief and clarify tasks
   ↓
 Day 1: Each member develops their subsystem
