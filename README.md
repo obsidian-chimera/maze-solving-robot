@@ -31,8 +31,8 @@ Submit peer review
         Yes → Move to the right
         No → Move left
 
-2. use range instead of single number for a threshold to solve "an unstable front wall is detected";
-3. search left for a gap;
+2. Use range instead of single number for a threshold to solve "an unstable front wall is detected";
+3. Search left for a gap;
 4. Polling to avoids being confused by the comb-shaped irregularities on the front wall;
 
 ```
