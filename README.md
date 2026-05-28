@@ -32,15 +32,21 @@ G=1 indicate that the robot is in a square adjacent to one of the green walls.
 
 ## 3. FlowChart
 ```text
-Explaiination:
-There's no wall ahead
-→ Keep going
-There is a wall ahead
-    Is there a blockage on the left?
-      Yes → Move to the right
-      No → Move left
+1.Explaiination:
+  There's no wall ahead
+  → Keep going
+  There is a wall ahead
+      Is there a blockage on the left?
+        Yes → Move to the right
+        No → Move left
+
+2. use voting algorithm to solve "an unstable front wall is detected";
+3. search left for a gap;
+4. Polling to avoids being confused by the comb-shaped irregularities on the front wall;
+
 ```
-<img width="706" height="680" alt="image" src="https://github.com/user-attachments/assets/1fa4269b-f67e-4c1d-b82a-c068a74b3c50" />
+<img width="556" height="701" alt="image" src="https://github.com/user-attachments/assets/2ca0fce4-e264-402d-88cc-071f0db88261" />
+
 
 
 
