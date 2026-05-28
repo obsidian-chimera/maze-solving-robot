@@ -21,3 +21,5 @@ Final: Improve and test in maze attempt 2
   ↓
 Submit peer review
 ```
+## 2. State Transition Diagram
+<img width="484" height="304" alt="image" src="https://github.com/user-attachments/assets/d2fd882f-0db2-47c2-ba22-3066f42dc209" />
