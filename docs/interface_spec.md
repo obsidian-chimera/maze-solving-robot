@@ -36,3 +36,15 @@ enum RobotState {
   STATE_STOP
 };
 ```
+
+## 5. File Overview
+```cpp
+config.h     // Set pin number / threshold / speed
+sensors.h    // Declare sensor related function and SensorData
+sensors.cpp  // Achieve readSensors()
+motors.h     // Declare motor related function
+motors.cpp   // Achieve driveForward(), stopAllMotors()
+fsm.h        // Declare FSM
+fsm.cpp      // Achieve updateDecision(), executeAction()
+main_robot.ino // Only be responsible of setup() and loop()
+```

@@ -1,7 +1,7 @@
-#include "config.h"
-#include "sensors.h"
-#include "motors.h"
-#include "fsm.h"
+#include "src/config.h"
+#include "src/sensors.h"
+#include "src/motors.h"
+#include "src/fsm.h"
 
 unsigned long lastDebugTime = 0;
 
