@@ -1,26 +1,39 @@
 # Pin Map
 
-## Motor Shield Reserved Pins
+## Project Pins
+
+| Pin | Code Name | Function |
+|---|---|---|
+| D2 | `LEFT_SIDE_SWITCH_PIN` | left side switch |
+| D4 | `RIGHT_SIDE_SWITCH_PIN` | right side switch |
+| D6 | `SELF_MADE_H_BRIDGE_IN1_PIN` | self-made H-bridge IN1 |
+| D7 | `SELF_MADE_H_BRIDGE_IN2_PIN` | self-made H-bridge IN2 |
+| D10 | `FRONT_IR_LED_ENABLE_PIN` | optional front IR LED enable, currently not controlled by code |
+| D3 | `MOTOR_A_PWM` | Motor A PWM, controls left/right steering strength |
+| D11 | `MOTOR_B_PWM` | Motor B PWM, controls forward drive strength |
+| A2 | `FRONT_PHOTODIODE_PIN` | front photodiode |
+| A3 | `REAR_PHOTODIODE_PIN` | rear photodiode |
+
+## Motor Control Pins
 
 | Pin | Function | Note |
 |---|---|---|
-| D3 | PWM A | Motor A speed |
-| D8 | Brake B | Stop signal |
-| D9 | Brake A | Stop signal |
-| D11 | PWM B | Motor B speed |
-| D12 | DIR A | Motor A direction |
-| D13 | DIR B | Motor B direction |
+| D3 | `MOTOR_A_PWM` | PWM for left/right steering strength |
+| D11 | `MOTOR_B_PWM` | PWM for forward drive strength |
+| D6 | `SELF_MADE_H_BRIDGE_IN1_PIN` | H-bridge direction input for steering |
+| D7 | `SELF_MADE_H_BRIDGE_IN2_PIN` | H-bridge direction input for steering |
+
+DIR and BRAKE pins from the original motor shield plan are not used in the current code.
 
 ## Analog Pins
 
-A0 and A1 are reserved by the motor shield for current measurement.  
-Do not connect analog sensors to A0 or A1. Use A2-A5 for analog sensors.
+Use A2-A5 for analog sensors in the current project layout.
 
 | Pin | Use |
 |---|---|
-| A0 | Reserved: motor shield current sensing |
-| A1 | Reserved: motor shield current sensing |
-| A2 | Front wall sensor |
-| A3 | Rear sensor / spare |
+| A0 | Spare |
+| A1 | Spare |
+| A2 | front photodiode |
+| A3 | rear photodiode |
 | A4 | Spare |
 | A5 | Spare |

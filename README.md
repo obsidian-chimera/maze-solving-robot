@@ -1,54 +1,38 @@
 # maze-solving-robot
-Arduino maze-solving robot project for Scenario B ELEC0035 UCL
 
-## 1. Development Process
-```text
-Day 1: Read brief and clarify tasks
-  ↓
-Day 1: Each member develops their subsystem
-  ↓
-Day 2: Agree uniform interfaces for sensors, motors, encoders, and decision logic
-  ↓
-Day 2: Role 1 builds the software framework
-  ↓
-Day 3: Connect subsystem code into the main program
-  ↓
-Day 3: Dry run with wheels raised and sensors tested
-  ↓
-Final: Test in maze attempt 1
-  ↓
-Final: Improve and test in maze attempt 2
-  ↓
-Submit peer review
+Arduino maze-solving robot project for Scenario B ELEC0035 UCL.
+
+## Start Here
+
+- [Project context](PROJECT_CONTEXT.md)
+- [Robot behavior](docs/robot_behavior.md)
+- [Pin map](docs/pin_map.md)
+- [Interface spec](docs/interface_spec.md)
+- [Arduino setup](docs/setup_arduino.md)
+
+## Current Framework
+
+The main sketch connects three subsystems:
+
+- sensors: `readSensors()` returns front, rear, left-side, and right-side readings
+- decision logic: `updateDecision()` and `executeAction()` run the FSM
+- motors: `driveForward()`, `moveLeft()`, and `moveRight()` issue movement commands
+- encoders: `gapEntryDistanceReached()` checks whether the robot body has entered a detected gap
+
+Motor A PWM controls left/right steering strength. Motor B PWM controls forward drive strength.
+
+## Build and Upload
+
+This project includes a PlatformIO configuration for Arduino Uno.
+
+```bash
+pio run
+pio run -t upload
+pio device monitor
 ```
-## 2. Flow Chart
-```text
-1.Explaiination:
-  There's no wall ahead
-  → Keep going
-  There is a wall ahead
-      Is there a blockage on the left?
-        Yes → Move to the right
-        No → Move left
 
-2. Use range instead of single number for a threshold to solve "an unstable front wall is detected";
-3. Search left for a gap;
-4. Polling to avoids being confused by the comb-shaped irregularities on the front wall;
+The serial monitor baud rate is `9600`. See [Arduino setup](docs/setup_arduino.md) for the full VS Code and Arduino IDE workflow.
 
-```
-<img width="1279" height="1428" alt="flowchart-UWL" src="https://github.com/user-attachments/assets/a217654d-e307-4bab-a8ae-cab8f239d928" />
+## Source Materials
 
-
-## 3. State Transition Diagram
-<img width="333" height="315" alt="image" src="https://github.com/user-attachments/assets/71426a11-4d9e-4353-98ff-8dd7bd62e035" />
-
-```text
-R=1 indicates that the robot is in a square with a section of the red walls in front.
-G=1 indicate that the robot is in a square adjacent to one of the green walls.
-```
-<img width="484" height="304" alt="image" src="https://github.com/user-attachments/assets/d2fd882f-0db2-47c2-ba22-3066f42dc209" />
-
-
-
-
-
+- [Flowchart image](docs/assets/flowchart-UWL.png)
