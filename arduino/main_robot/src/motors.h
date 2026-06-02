@@ -3,9 +3,10 @@
 
 void initMotors();
 
-void driveForward(int pwm);
+void stopMotors();
+void driveForward();
 
-void moveLeft(int pwm);
-void moveRight(int pwm);
+void moveLeft();
+void moveRight();
 
 #endif

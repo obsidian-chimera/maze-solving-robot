@@ -23,15 +23,15 @@ No third-party Arduino library is currently required.
 
 ## PlatformIO in VS Code
 
-This repository includes `platformio.ini` for Arduino Uno:
+This repository includes `platformio.ini` for Arduino Mega 2560.
 
 ```ini
 [platformio]
 src_dir = arduino/main_robot
 
-[env:uno]
+[env:megaatmega2560]
 platform = atmelavr
-board = uno
+board = megaatmega2560
 framework = arduino
 monitor_speed = 9600
 ```
@@ -40,15 +40,17 @@ monitor_speed = 9600
 2. Install the PlatformIO IDE extension if it is not already installed.
 3. Wait for PlatformIO Core to finish initializing.
 4. Open the PlatformIO panel.
-5. Click Build to compile the project.
-6. Connect the Arduino Uno and select the correct serial port.
-7. Click Upload to flash the board.
-8. Click Monitor to open the serial monitor at `9600` baud.
+5. Select `megaatmega2560`.
+6. Click Build to compile the project.
+7. Connect the Arduino Mega 2560 and select the correct serial port.
+8. Click Upload to flash the board.
+9. Click Monitor to open the serial monitor at `9600` baud.
 
 Equivalent terminal commands:
 
 ```bash
 pio run
+pio run -e megaatmega2560
 pio run -t upload
 pio device monitor
 ```
@@ -74,10 +76,12 @@ pio device monitor
 
 - Check [pin map](pin_map.md).
 - Check [interface spec](interface_spec.md).
-- Confirm Motor A steering direction before running at full speed.
-- Confirm Motor B forward-drive direction before running at full speed.
-- Replace the placeholder encoder constants in `config.h` with measured robot values.
-- Set `USE_DUMMY_MOTORS`, `USE_DUMMY_SENSORS`, and `USE_DUMMY_ENCODERS` to `false` only after the matching real subsystem is integrated.
+- Confirm M3/M4 H-bridge direction before running side movement.
+- Confirm B1/B2 forward PWM wiring before running forward movement.
+- Confirm D14-D16 and D30 state LEDs indicate `STATE_MOVE_LEFT`, `STATE_MOVE_RIGHT`, `STATE_CONFIRM_GAP`, and `STATE_FORWARD`.
+- Confirm encoder channel A/B wiring on D2/D18/D19/D20 and D22/D24/D26/D28. Channel A uses `RISING`; channel B uses `INPUT_PULLUP`.
+- Both `LEFT_MOVE_ENCODER_INDEX` and `RIGHT_MOVE_ENCODER_INDEX` currently use M1 Front Left because that encoder has been validated.
+- `USE_DUMMY_ENCODERS` is currently `false` because the Role 4 encoder wiring and `182` counts/rev measurement have been validated. Set `USE_DUMMY_SENSORS` to `false` only after the real sensor subsystem is integrated.
 - Test with wheels raised before testing in the maze.
 
 ## Future Libraries

@@ -19,14 +19,15 @@ The main sketch connects three subsystems:
 - motors: `driveForward()`, `moveLeft()`, and `moveRight()` issue movement commands
 - encoders: `gapEntryDistanceReached()` checks whether the robot body has entered a detected gap
 
-Motor A PWM controls left/right steering strength. Motor B PWM controls forward drive strength.
+B1/B2 PWM pins drive forward motion at the fixed `FORWARD_PWM` value. M3/M4 are separate self-made H-bridge side motors driven with digital direction pins: both forward for left movement and both reverse for right movement. Encoder readings are used for distance/gap checks only, not for motor speed control.
 
 ## Build and Upload
 
-This project includes a PlatformIO configuration for Arduino Uno.
+This project includes a PlatformIO configuration for Arduino Mega 2560.
 
 ```bash
 pio run
+pio run -e megaatmega2560
 pio run -t upload
 pio device monitor
 ```

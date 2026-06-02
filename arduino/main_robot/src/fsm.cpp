@@ -15,12 +15,20 @@ void changeState(RobotState newState) {
     currentState = newState;
 
     if (newState == STATE_CONFIRM_GAP) {
+      if (previousState == STATE_MOVE_LEFT) {
+        selectSideEncoderForLeftMove();
+      } else if (previousState == STATE_MOVE_RIGHT) {
+        selectSideEncoderForRightMove();
+      }
+
       gapStartTime = millis();
       resetSideEncoderCount();
     }
 
-    Serial.print("State changed to: ");
-    Serial.println(getStateName(currentState));
+    if (ENABLE_DEBUG_PRINT) {
+      Serial.print("State changed to: ");
+      Serial.println(getStateName(currentState));
+    }
   }
 }
 
@@ -31,6 +39,13 @@ void initFSM() {
 }
 
 void updateDecision(const SensorData &s) {
+  // Safety stop: front blocked and both side contacts active means there is no
+  // clear direction to continue moving.
+  if (s.frontBlocked && s.leftWallHit && s.rightWallHit) {
+    changeState(STATE_STOPPING);
+    return;
+  }
+
   switch (currentState) {
     case STATE_FORWARD:
       if (s.frontBlocked) {
@@ -79,29 +94,43 @@ void updateDecision(const SensorData &s) {
       }
       break;
 
+    case STATE_STOPPING:
+      if (s.frontClear) {
+        changeState(STATE_FORWARD);
+      } else if (s.frontBlocked && !s.leftWallHit) {
+        changeState(STATE_MOVE_LEFT);
+      } else if (s.frontBlocked && !s.rightWallHit) {
+        changeState(STATE_MOVE_RIGHT);
+      }
+      break;
+
   }
 }
 
 void executeAction() {
   switch (currentState) {
     case STATE_FORWARD:
-      driveForward(FORWARD_PWM);
+      driveForward();
       break;
 
     case STATE_MOVE_LEFT:
-      moveLeft(SIDE_PWM);
+      moveLeft();
       break;
 
     case STATE_MOVE_RIGHT:
-      moveRight(SIDE_PWM);
+      moveRight();
       break;
 
     case STATE_CONFIRM_GAP:
       if (previousState == STATE_MOVE_LEFT) {
-        moveLeft(SIDE_PWM);
+        moveLeft();
       } else {
-        moveRight(SIDE_PWM);
+        moveRight();
       }
+      break;
+
+    case STATE_STOPPING:
+      stopMotors();
       break;
 
   }
@@ -121,6 +150,8 @@ const char* getStateName(RobotState state) {
       return "MOVE_RIGHT";
     case STATE_CONFIRM_GAP:
       return "CONFIRM_GAP";
+    case STATE_STOPPING:
+      return "STOPPING";
     default:
       return "UNKNOWN";
   }

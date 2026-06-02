@@ -3,7 +3,7 @@
 
 // ----- Dummy sensor values -----
 // Change these values when USE_DUMMY_SENSORS is true.
-const unsigned long DUMMY_PHASE_MS = 2000;
+const unsigned long DUMMY_PHASE_MS   = 2000;
 
 const int DUMMY_FRONT_CLEAR_RAW = 200;
 const int DUMMY_FRONT_BLOCKED_RAW = 500;

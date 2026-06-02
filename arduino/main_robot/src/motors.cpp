@@ -3,60 +3,113 @@
 
 // ----- Dummy motor output -----
 // Enable USE_DUMMY_MOTORS in config.h to print motor commands instead of writing pins.
-static void printDummyMotorCommand(const char* action, int pwm) {
+static void printDummyMotorCommand(const char* action) {
   Serial.print("Dummy motor: ");
   Serial.print(action);
-  Serial.print(" pwm=");
-  Serial.println(pwm);
+  Serial.print(" forward_pwm=");
+  Serial.print(FORWARD_PWM);
+  Serial.print(" side_pwm=");
+  Serial.println(SIDE_PWM);
+}
+
+static void stopForwardMotors() {
+  analogWrite(B1_FORWARD_PWM_PIN, 0);
+  analogWrite(B2_FORWARD_PWM_PIN, 0);
+}
+
+static void engageForwardBrakes() {
+  digitalWrite(FORWARD_MOTOR_A_BRAKE_PIN, HIGH);
+  digitalWrite(FORWARD_MOTOR_B_BRAKE_PIN, HIGH);
+}
+
+static void releaseForwardBrakes() {
+  digitalWrite(FORWARD_MOTOR_A_BRAKE_PIN, LOW);
+  digitalWrite(FORWARD_MOTOR_B_BRAKE_PIN, LOW);
+}
+
+static void setForwardMotorDirection() {
+  digitalWrite(FORWARD_MOTOR_A_DIRECTION_PIN, HIGH);
+  digitalWrite(FORWARD_MOTOR_B_DIRECTION_PIN, LOW);
+}
+
+static void stopSideMotors() {
+  digitalWrite(A1_H_BRIDGE_IN1_PIN, LOW);
+  digitalWrite(A1_H_BRIDGE_IN2_PIN, LOW);
+  digitalWrite(A2_H_BRIDGE_IN1_PIN, LOW);
+  digitalWrite(A2_H_BRIDGE_IN2_PIN, LOW);
 }
 
 void initMotors() {
-  pinMode(MOTOR_A_PWM, OUTPUT);
-  pinMode(MOTOR_B_PWM, OUTPUT);
+  pinMode(B1_FORWARD_PWM_PIN, OUTPUT);
+  pinMode(B2_FORWARD_PWM_PIN, OUTPUT);
+  pinMode(FORWARD_MOTOR_A_DIRECTION_PIN, OUTPUT);
+  pinMode(FORWARD_MOTOR_B_DIRECTION_PIN, OUTPUT);
+  pinMode(FORWARD_MOTOR_A_BRAKE_PIN, OUTPUT);
+  pinMode(FORWARD_MOTOR_B_BRAKE_PIN, OUTPUT);
 
-  pinMode(SELF_MADE_H_BRIDGE_IN1_PIN, OUTPUT);
-  pinMode(SELF_MADE_H_BRIDGE_IN2_PIN, OUTPUT);
+  pinMode(A1_H_BRIDGE_IN1_PIN, OUTPUT);
+  pinMode(A1_H_BRIDGE_IN2_PIN, OUTPUT);
+  pinMode(A2_H_BRIDGE_IN1_PIN, OUTPUT);
+  pinMode(A2_H_BRIDGE_IN2_PIN, OUTPUT);
 
   // Set safe startup output values before the FSM starts issuing commands.
-  analogWrite(MOTOR_A_PWM, 0);
-  analogWrite(MOTOR_B_PWM, 0);
-  digitalWrite(SELF_MADE_H_BRIDGE_IN1_PIN, LOW);
-  digitalWrite(SELF_MADE_H_BRIDGE_IN2_PIN, LOW);
+  stopForwardMotors();
+  setForwardMotorDirection();
+  engageForwardBrakes();
+  stopSideMotors();
 }
 
-void driveForward(int pwm) {
+void stopMotors() {
   if (USE_DUMMY_MOTORS) {
-    printDummyMotorCommand("FORWARD", pwm);
+    printDummyMotorCommand("STOP");
     return;
   }
 
-  // Keep movement modes exclusive: forward drive disables steering PWM.
-  analogWrite(MOTOR_A_PWM, 0);
-  analogWrite(MOTOR_B_PWM, pwm);
+  stopForwardMotors();
+  engageForwardBrakes();
+  stopSideMotors();
 }
 
-void moveLeft(int pwm) {
+void driveForward() {
   if (USE_DUMMY_MOTORS) {
-    printDummyMotorCommand("LEFT", pwm);
+    printDummyMotorCommand("FORWARD");
     return;
   }
 
-  // Keep movement modes exclusive: steering disables forward PWM.
-  analogWrite(MOTOR_B_PWM, 0);
-  digitalWrite(SELF_MADE_H_BRIDGE_IN1_PIN, HIGH);
-  digitalWrite(SELF_MADE_H_BRIDGE_IN2_PIN, LOW);
-  analogWrite(MOTOR_A_PWM, pwm);
+  // B1/B2 only drive forward. M3/M4 side motors are off during forward motion.
+  stopSideMotors();
+  setForwardMotorDirection();
+  releaseForwardBrakes();
+  analogWrite(B1_FORWARD_PWM_PIN, FORWARD_PWM);
+  analogWrite(B2_FORWARD_PWM_PIN, FORWARD_PWM);
 }
 
-void moveRight(int pwm) {
+void moveLeft() {
   if (USE_DUMMY_MOTORS) {
-    printDummyMotorCommand("RIGHT", pwm);
+    printDummyMotorCommand("LEFT");
     return;
   }
 
-  // Keep movement modes exclusive: steering disables forward PWM.
-  analogWrite(MOTOR_B_PWM, 0);
-  digitalWrite(SELF_MADE_H_BRIDGE_IN1_PIN, LOW);
-  digitalWrite(SELF_MADE_H_BRIDGE_IN2_PIN, HIGH);
-  analogWrite(MOTOR_A_PWM, pwm);
+  // M3/M4 side motors both run forward for left movement.
+  stopForwardMotors();
+  engageForwardBrakes();
+  digitalWrite(A1_H_BRIDGE_IN1_PIN, HIGH);
+  digitalWrite(A1_H_BRIDGE_IN2_PIN, LOW);
+  digitalWrite(A2_H_BRIDGE_IN1_PIN, HIGH);
+  digitalWrite(A2_H_BRIDGE_IN2_PIN, LOW);
+}  
+
+void moveRight() {
+  if (USE_DUMMY_MOTORS) {
+    printDummyMotorCommand("RIGHT");
+    return;
+  }
+
+  // M3/M4 side motors both run reverse for right movement.
+  stopForwardMotors();
+  engageForwardBrakes();
+  digitalWrite(A1_H_BRIDGE_IN1_PIN, LOW);
+  digitalWrite(A1_H_BRIDGE_IN2_PIN, HIGH);
+  digitalWrite(A2_H_BRIDGE_IN1_PIN, LOW);
+  digitalWrite(A2_H_BRIDGE_IN2_PIN, HIGH);
 }

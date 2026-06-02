@@ -24,6 +24,7 @@ After detecting a gap, keep moving sideways until the encoder distance shows the
 ```
 
 ![Flowchart](assets/flowchart-UWL.png)
+![alt text](image.png)
 
 ## Current State Machine
 
@@ -33,12 +34,15 @@ The current Arduino code represents the behavior with these states:
 - `STATE_MOVE_LEFT`: move left while monitoring the front and left side sensors.
 - `STATE_MOVE_RIGHT`: move right while monitoring the front and right side sensors.
 - `STATE_CONFIRM_GAP`: keep side movement until the front stays clear and side travel is greater than half the robot diagonal, then move forward.
+- `STATE_STOPPING`: stop all motors when the front is blocked and both side switches are hit. Forward PWM is set to 0 and the Motor Shield Rev3 A/B brake pins are driven HIGH.
 
 Side movement rules:
 
 - If moving left and the left side switch is hit, change to `STATE_MOVE_RIGHT`.
 - If moving right and the right side switch is hit, change to `STATE_MOVE_LEFT`.
 - If `frontClear` is true at the same time as a side hit, `frontClear` has priority.
+- If `frontBlocked`, `leftWallHit`, and `rightWallHit` are all true, enter `STATE_STOPPING`.
+- From `STATE_STOPPING`, move forward again when `frontClear` is true, or resume side movement if the front is blocked but one side is available. Forward brakes are released only when `driveForward()` runs.
 
 Gap entry rule:
 

@@ -13,6 +13,18 @@ const bool USE_DUMMY_ENCODERS = true;
 const bool ENABLE_DEBUG_PRINT = true;
 ```
 
+The current checked-in configuration uses real motor outputs with dummy sensor
+and encoder inputs:
+
+```cpp
+const bool USE_DUMMY_MOTORS = true;
+const bool USE_DUMMY_SENSORS = true;
+const bool USE_DUMMY_ENCODERS = true;
+```
+
+Set `USE_DUMMY_MOTORS` back to `true` only when running this fully dummy demo
+without real motor movement.
+
 ## What It Demonstrates
 
 - `readSensors()` can provide dummy sensor data without reading real pins.
