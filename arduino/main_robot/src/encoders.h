@@ -1,12 +1,13 @@
 #ifndef ENCODERS_H
 #define ENCODERS_H
 
+#include <Arduino.h>
+
 void initEncoders();
-void resetSideEncoderCount();
 void resetAllEncoderCounts();
+void resetSideEncoderCount();
 void selectSideEncoderForLeftMove();
 void selectSideEncoderForRightMove();
-
 long getEncoderCount(int encoderIndex);
 long getSideEncoderCount();
 float getSideTravelMm();

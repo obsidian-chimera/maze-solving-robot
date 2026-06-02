@@ -11,23 +11,37 @@ void initStatusLeds() {
   pinMode(MOVE_LEFT_LED_PIN, OUTPUT);
   pinMode(MOVE_RIGHT_LED_PIN, OUTPUT);
   pinMode(CONFIRM_GAP_LED_PIN, OUTPUT);
+  pinMode(STOPPING_LED_PIN, OUTPUT);
 }
 
 void updateStatusLeds() {
   const RobotState state = getCurrentState();
 
+  digitalWrite(FORWARD_LED_PIN,     state == STATE_FORWARD ? HIGH : LOW);
+  digitalWrite(MOVE_LEFT_LED_PIN,   state == STATE_MOVE_LEFT ? HIGH : LOW);
+  digitalWrite(MOVE_RIGHT_LED_PIN,  state == STATE_MOVE_RIGHT ? HIGH : LOW);
+  digitalWrite(CONFIRM_GAP_LED_PIN, state == STATE_CONFIRM_GAP ? HIGH : LOW);
+
+  // STOPPING is made deliberately obvious: all LEDs ON.
   if (state == STATE_STOPPING) {
     digitalWrite(FORWARD_LED_PIN, HIGH);
     digitalWrite(MOVE_LEFT_LED_PIN, HIGH);
     digitalWrite(MOVE_RIGHT_LED_PIN, HIGH);
     digitalWrite(CONFIRM_GAP_LED_PIN, HIGH);
-    return;
+    digitalWrite(STOPPING_LED_PIN, HIGH);
+  } else {
+    digitalWrite(STOPPING_LED_PIN, LOW);
   }
+}
 
-  digitalWrite(FORWARD_LED_PIN, state == STATE_FORWARD ? HIGH : LOW);
-  digitalWrite(MOVE_LEFT_LED_PIN, state == STATE_MOVE_LEFT ? HIGH : LOW);
-  digitalWrite(MOVE_RIGHT_LED_PIN, state == STATE_MOVE_RIGHT ? HIGH : LOW);
-  digitalWrite(CONFIRM_GAP_LED_PIN, state == STATE_CONFIRM_GAP ? HIGH : LOW);
+void printDebug(const SensorData &s) {
+  printSensors(s);
+  Serial.print("STATE = ");
+  Serial.print(getStateName(getCurrentState()));
+  Serial.print(" | side_count = ");
+  Serial.print(getSideEncoderCount());
+  Serial.print(" | side_travel_mm = ");
+  Serial.println(getSideTravelMm());
 }
 
 void setup() {
@@ -42,23 +56,20 @@ void setup() {
   initFSM();
 
   if (ENABLE_DEBUG_PRINT) {
-    Serial.println("Robot framework started.");
+    Serial.println("Maze robot with PWM side H-bridge started.");
+    Serial.println("Forward -> side-search -> confirm passable gap -> forward.");
   }
 }
 
 void loop() {
-  SensorData s = readSensors();
+  const SensorData sensors = readSensors();
 
-  updateDecision(s);
+  updateDecision(sensors);
   executeAction();
   updateStatusLeds();
 
-  if (ENABLE_DEBUG_PRINT && millis() - lastDebugTime > DEBUG_INTERVAL_MS) {
-    printSensors(s);
-
-    Serial.print("ACTION = ");
-    Serial.println(getStateName(getCurrentState()));
-
+  if (ENABLE_DEBUG_PRINT && millis() - lastDebugTime >= DEBUG_INTERVAL_MS) {
+    printDebug(sensors);
     lastDebugTime = millis();
   }
 }

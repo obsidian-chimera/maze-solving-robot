@@ -2,13 +2,19 @@
 #include "config.h"
 
 static volatile long encoderCounts[ENCODER_COUNT] = {0, 0, 0, 0};
-static int activeSideEncoderIndex = LEFT_MOVE_ENCODER_INDEX;
+static int activeSideEncoderIndex = SIDE_ENCODER_PRIMARY_INDEX;
+
+static long absoluteLong(long value) {
+  return value < 0 ? -value : value;
+}
+
+static bool validEncoderIndex(int encoderIndex) {
+  return encoderIndex >= 0 && encoderIndex < ENCODER_COUNT;
+}
 
 static void updateEncoder(int encoderIndex) {
   const int encoderB = digitalRead(ENCODER_B_PINS[encoderIndex]);
 
-  // Direction convention from the validated Role 4 encoder test:
-  // when channel A rises, B LOW means positive travel.
   if (encoderB == LOW) {
     encoderCounts[encoderIndex]++;
   } else {
@@ -16,21 +22,10 @@ static void updateEncoder(int encoderIndex) {
   }
 }
 
-static void updateEncoder0() {
-  updateEncoder(0);
-}
-
-static void updateEncoder1() {
-  updateEncoder(1);
-}
-
-static void updateEncoder2() {
-  updateEncoder(2);
-}
-
-static void updateEncoder3() {
-  updateEncoder(3);
-}
+static void updateEncoder0() { updateEncoder(0); }
+static void updateEncoder1() { updateEncoder(1); }
+static void updateEncoder2() { updateEncoder(2); }
+static void updateEncoder3() { updateEncoder(3); }
 
 void initEncoders() {
   for (int i = 0; i < ENCODER_COUNT; i++) {
@@ -49,11 +44,21 @@ void initEncoders() {
 }
 
 void resetSideEncoderCount() {
-  if (activeSideEncoderIndex >= 0 && activeSideEncoderIndex < ENCODER_COUNT) {
-    noInterrupts();
-    encoderCounts[activeSideEncoderIndex] = 0;
-    interrupts();
+  noInterrupts();
+
+  if (validEncoderIndex(SIDE_ENCODER_PRIMARY_INDEX)) {
+    encoderCounts[SIDE_ENCODER_PRIMARY_INDEX] = 0;
   }
+
+  if (SIDE_ENCODER_AVERAGE_TWO && validEncoderIndex(SIDE_ENCODER_SECONDARY_INDEX)) {
+    encoderCounts[SIDE_ENCODER_SECONDARY_INDEX] = 0;
+  }
+
+  if (validEncoderIndex(activeSideEncoderIndex)) {
+    encoderCounts[activeSideEncoderIndex] = 0;
+  }
+
+  interrupts();
 }
 
 void resetAllEncoderCounts() {
@@ -65,15 +70,15 @@ void resetAllEncoderCounts() {
 }
 
 void selectSideEncoderForLeftMove() {
-  activeSideEncoderIndex = LEFT_MOVE_ENCODER_INDEX;
+  activeSideEncoderIndex = SIDE_ENCODER_PRIMARY_INDEX;
 }
 
 void selectSideEncoderForRightMove() {
-  activeSideEncoderIndex = RIGHT_MOVE_ENCODER_INDEX;
+  activeSideEncoderIndex = SIDE_ENCODER_PRIMARY_INDEX;
 }
 
 long getEncoderCount(int encoderIndex) {
-  if (encoderIndex < 0 || encoderIndex >= ENCODER_COUNT) {
+  if (!validEncoderIndex(encoderIndex)) {
     return 0;
   }
 
@@ -92,16 +97,21 @@ long getEncoderCount(int encoderIndex) {
 }
 
 long getSideEncoderCount() {
-  return getEncoderCount(activeSideEncoderIndex);
+  if (SIDE_ENCODER_AVERAGE_TWO && validEncoderIndex(SIDE_ENCODER_SECONDARY_INDEX)) {
+    const long primary = absoluteLong(getEncoderCount(SIDE_ENCODER_PRIMARY_INDEX));
+    const long secondary = absoluteLong(getEncoderCount(SIDE_ENCODER_SECONDARY_INDEX));
+    return (primary + secondary) / 2;
+  }
+
+  return absoluteLong(getEncoderCount(activeSideEncoderIndex));
 }
 
 float getSideTravelMm() {
   const long count = getSideEncoderCount();
-  const long distanceCount = (count < 0) ? -count : count;
-  const float encoderTurns = distanceCount / ENCODER_COUNTS_PER_REV;
-  return encoderTurns * WHEEL_CIRCUMFERENCE_MM + GAP_ENTRY_REDUNDANCY_MM;
+  const float encoderTurns = count / ENCODER_COUNTS_PER_REV;
+  return (encoderTurns * WHEEL_CIRCUMFERENCE_MM) + GAP_ENTRY_REDUNDANCY_MM;
 }
 
 bool gapEntryDistanceReached() {
-  return getSideTravelMm() > (ROBOT_DIAGONAL_MM / 2.0);
+  return getSideTravelMm() >= MIN_PASSABLE_GAP_MM;
 }

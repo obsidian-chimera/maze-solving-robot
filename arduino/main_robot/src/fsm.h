@@ -12,10 +12,8 @@ enum RobotState {
 };
 
 void initFSM();
-
 void updateDecision(const SensorData &s);
 void executeAction();
-
 RobotState getCurrentState();
 const char* getStateName(RobotState state);
 
